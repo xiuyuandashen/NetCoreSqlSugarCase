@@ -1,4 +1,4 @@
-namespace NetCoreSqlSugarCase
+﻿namespace NetCoreSqlSugarCase
 {
     public class WeatherForecast
     {
