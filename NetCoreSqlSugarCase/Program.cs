@@ -2,7 +2,6 @@
 using SqlSugar;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -11,6 +10,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // 注册SqlSugar
 builder.Services.AppSqlsugarSetup(builder.Configuration);
+// 配置redis
+builder.Services.AppRedisConfig(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,3 +32,4 @@ app.MapControllers();
 app.Run();
 
 
+//app.Services.GetService<ISqlSugarClient>();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NetCoreSqlSugarCase.Common;
 using NetCoreSqlSugarCase.Models;
 using Newtonsoft.Json;
 using SqlSugar;
@@ -11,11 +12,14 @@ namespace NetCoreSqlSugarCase.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        public ISqlSugarClient _db { get; set; }
+        public  ISqlSugarClient _db { get; set; }
 
-        public UserController(ISqlSugarClient db)
+        public  ICache _cache { get; set; }
+
+        public UserController(ISqlSugarClient db,ICache cache)
         {
             _db = db;
+            _cache = cache;
         }
 
         /// <summary>
@@ -68,11 +72,20 @@ namespace NetCoreSqlSugarCase.Controllers
         [HttpGet, Route("all/users")]
         public Dictionary<string, object> selects()
         {
-            var list = _db.Queryable<User>().SplitTable(tabs => tabs).ToList();//没有条件就是全部表
+            List < User > list = null;
+            if (_cache.Exists("userAll"))
+            {
+                 list = JsonConvert.DeserializeObject< List < User >>( _cache.Get("userAll"));
+            }
+            list = _db.Queryable<User>().SplitTable(tabs => tabs).ToList();//没有条件就是全部表
+            _cache.Set("userAll", list);
             return new Dictionary<string, object>
                 {
                     {"data",list }
                 };
         }
+
+
+        
     }
 }
